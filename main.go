@@ -5,14 +5,20 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 func main() {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "3000"
+	}
 
 	http.HandleFunc("/rebalancing", rebalancingHandler)
 
-	fmt.Println("Running on :3000")
-	http.ListenAndServe(":3000", nil)
+	fmt.Println("Running on :" + port)
+	http.ListenAndServe(":"+port, nil)
 }
 
 type rebalancingRequest struct {
