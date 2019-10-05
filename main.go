@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -22,10 +23,17 @@ type rebalancingRequest struct {
 func rebalancingHandler(w http.ResponseWriter, r *http.Request) {
 	rq := rebalancingRequest{}
 
-	err := json.NewDecoder(r.Body).Decode(&rq)
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	err = json.Unmarshal(b, &rq)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("invalid json"))
+		w.Write([]byte("invalid json: " + err.Error()))
 		return
 	}
 

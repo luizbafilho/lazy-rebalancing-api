@@ -22,7 +22,6 @@ func (p Portfolio) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 func (p Portfolio) Less(i, j int) bool { return p[i].Deviation < p[j].Deviation }
 
 func lazyRebalance(amountToContribute float64, assets Portfolio) Portfolio {
-
 	portfolioTotal := float64(0)
 	for _, a := range assets {
 		portfolioTotal += a.Value
@@ -35,8 +34,8 @@ func lazyRebalance(amountToContribute float64, assets Portfolio) Portfolio {
 
 		deviation := (a.Value / targetValue) - 1.0
 
-		if portfolioTotal <= 0 {
-			a.ActualAllocation = 0
+		if portfolioTotal <= 0.0 {
+			a.ActualAllocation = 0.0
 		} else {
 			a.ActualAllocation = a.Value / portfolioTotal
 		}
@@ -51,10 +50,10 @@ func lazyRebalance(amountToContribute float64, assets Portfolio) Portfolio {
 	amountLeftToContribute := amountToContribute
 	_k := 0.0
 
-	var lastKnownIndex int
+	lastKnownIndex := -1
 
 	for i, a := range assets {
-		if math.Abs(amountLeftToContribute) <= 0 {
+		if math.Abs(amountLeftToContribute) <= 0.0 {
 			break
 		}
 
@@ -83,9 +82,9 @@ func lazyRebalance(amountToContribute float64, assets Portfolio) Portfolio {
 		}
 	}
 
-	indexToStop := lastKnownIndex
-
-	if lastKnownIndex != 0 {
+	// indexToStop := lastKnownIndex
+	indexToStop := 0
+	if lastKnownIndex > -1 {
 		indexToStop = lastKnownIndex + 1
 	}
 
