@@ -13,6 +13,7 @@ type Asset struct {
 	TargetValue             float64 `json:"target_value,omitempty"`
 	Deviation               float64 `json:"deviation,omitempty"`
 	Delta                   float64 `json:"delta,omitempty"`
+	TotalNewHoldings        float64 `json:"total_new_holdings,omitempty"`
 }
 
 type Portfolio []Asset
@@ -99,6 +100,11 @@ func lazyRebalance(amountToContribute float64, assets Portfolio) Portfolio {
 		delta := targeValue * (_k - deviation)
 
 		a.Delta = delta
+	}
+
+	for i := range assets {
+		a := &assets[i]
+		a.TotalNewHoldings = (a.Value + a.Delta) * a.TargetAllocationPercent / a.TargetValue
 	}
 
 	return assets
